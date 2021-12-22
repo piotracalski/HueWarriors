@@ -1,0 +1,7 @@
+# common
+node_modules/
+.env
+
+#smart-contract
+artifacts/
+cache/
