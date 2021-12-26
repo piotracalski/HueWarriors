@@ -1,15 +1,28 @@
 const main = async () => {
-  const gameContractFactory = await hre.ethers.getContractFactory('MyEpicGame');
+  const gameContractFactory = await hre.ethers.getContractFactory('HueWarriors');
   const gameContract = await gameContractFactory.deploy(
-    ["Red", "Green", "Blue"],       // Names
-    ["https://i.imgur.com/pKd5Sdk.png", // Images
-    "https://i.imgur.com/xVu4vFL.png", 
-    "https://i.imgur.com/WMB6g9u.png"],
+    ["Red warrior", "Green warrior", "Blue warrior"],       // Names
+    ["https://huewarriors.web.app/img/warrior-red.png", // Images
+    "https://huewarriors.web.app/img/warrior-green.png", 
+    "https://huewarriors.web.app/img/warrior-blue.png"],
     [100, 200, 300],                    // Purity values
-    [100, 50, 25]                       // Attack strength values
+    [100, 50, 25],                      // Attack strength values
+    [20, 10, 5]                         // Critical hit values
   );
   await gameContract.deployed();
   console.log("Contract deployed to:", gameContract.address);
+
+  let txn;
+  // We only have three characters.
+  // an NFT w/ the character at index 2 of our array.
+  txn = await gameContract.mintCharacterNFT(2);
+  await txn.wait();
+  
+  // Get the value of the NFT's URI.
+  let returnedTokenUri = await gameContract.tokenURI(1);
+  console.log("Token URI:", returnedTokenUri);
+
+
 };
 
 const runMain = async () => {
