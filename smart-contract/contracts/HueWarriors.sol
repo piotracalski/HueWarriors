@@ -48,6 +48,9 @@ contract HueWarriors is ERC721 {
   // address => the NFTs tokenId
   mapping(address => uint256) public nftHolders;
 
+  event CharacterNFTMinted(address sender, uint256 tokenId, uint256 characterIndex);
+  event AttackComplete(uint newBossPurity, uint newPlayerPurity);
+
   constructor(
     string[] memory characterNames,
     string[] memory characterImageURIs,
@@ -121,6 +124,8 @@ contract HueWarriors is ERC721 {
 
     // Increment the tokenId for the next person that uses it.
     _tokenIds.increment();
+
+    emit CharacterNFTMinted(msg.sender, newItemId, _characterIndex);
   }
 
   function tokenURI(uint256 _tokenId) public view override returns (string memory) {
@@ -187,5 +192,26 @@ contract HueWarriors is ERC721 {
     // Console for ease.
     console.log("Player attacked boss. New boss purity: %s", boss.purity);
     console.log("Boss attacked player. New player purity: %s\n", player.purity);
+
+    emit AttackComplete(boss.purity, player.purity);
+  }
+
+  function checkIfUserHasNFT() public view returns (CharacterAttributes memory) {
+    uint256 userNftTokenId = nftHolders[msg.sender];
+    if (userNftTokenId > 0) {
+      return nftHolderAttributes[userNftTokenId];
+    }
+    else {
+      CharacterAttributes memory emptyStruct;
+      return emptyStruct;
+    }
+  }
+
+  function getAllDefaultCharacters() public view returns (CharacterAttributes[] memory) {
+    return defaultCharacters;
+  }
+
+  function getBoss() public view returns (Boss memory) {
+    return boss;
   }
 }
