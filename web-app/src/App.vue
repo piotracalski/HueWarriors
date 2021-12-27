@@ -1,18 +1,86 @@
 <template>
-  <header class="header-main">
-    <div class="container-centered">
-      <h1 class="heading-main">Hue Warriors</h1>
-      <button>connect your wallet to play the game</button>
-    </div>
-  </header>
+  <main>
+    <transition name="mode-fade" mode="out-in">
+      <div
+        v-if="!currentAccount"
+        class="container-centered"
+      >
+        <h1 class="heading-main">Hue Warriors</h1>
+        <button @click="connectWallet">Connect Your Wallet to Play the Game</button>
+      </div>
+    </transition>
+  </main>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, reactive, toRefs, onMounted } from 'vue';
+
+declare global {
+  interface Window {
+    ethereum:any;
+  }
+} 
 
 export default defineComponent({
   name: 'App',
   components: {
+  },
+  setup() {
+
+    const state = reactive({
+      currentAccount: undefined
+    })
+
+    const checkIfWalletIsConnected = async () => {
+
+      try {
+        const { ethereum } = window
+
+        if (!ethereum) {
+          console.log('Make sure you have MetaMask!')
+          return
+        } else {
+          console.log('We have the ethereum object', ethereum)
+
+          const accounts = await ethereum.request({ method: 'eth_accounts' })
+
+          if (accounts.length !== 0) {
+            const account = accounts[0]
+            console.log('Found an authorized account:', account)
+            state.currentAccount = account
+          } else {
+            console.log('No authorized account found')
+          }
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    const connectWallet = async () => {
+      try {
+        const { ethereum } = window
+        if (!ethereum) {
+          alert("Get MetaMask!")
+          return
+        }
+        const accounts = await ethereum.request({ method: "eth_requestAccounts" })
+        console.log("Connected", accounts[0])
+        state.currentAccount = accounts[0]
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    onMounted(() => {
+      checkIfWalletIsConnected()
+    })
+
+    return {
+      ...toRefs(state),
+      checkIfWalletIsConnected,
+      connectWallet
+    }
   }
 });
 </script>
@@ -22,7 +90,6 @@ export default defineComponent({
 #app {
   width: 100%;
   height: 100%;
-  font-family: Avenir, Helvetica, Arial, sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
