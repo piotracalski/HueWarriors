@@ -5,6 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "copy_images": "mkdir dist/img && cp -f ./src/assets/images/*.png ./dist/img/ && echo 'gallery images copied'",
     "deploy": "firebase deploy",
     "lint": "vue-cli-service lint"
   },

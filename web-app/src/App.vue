@@ -1,62 +1,44 @@
 <template>
-  <!-- <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/> -->
-  <div>
-    <div id="test-boss">
-      <BossImage />
+  <header>
+    <div>
+      <h1 class="heading-main">Hue Warriors</h1>
     </div>
-    <br>
-    <div id="test">
-      <WarriorImage />
-    </div>
-    <img alt="" src="./assets/images/lurid-giant.png">
-    <img alt="" src="./assets/images/warrior-red.png">
-    <img alt="" src="./assets/images/warrior-green.png">
-    <img alt="" src="./assets/images/warrior-blue.png">
-  </div>
+  </header>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-// import HelloWorld from './components/HelloWorld.vue';
-import BossImage from './components/boss/BossImage.vue';
-import WarriorImage from './components/warrior/WarriorImage.vue';
 
 export default defineComponent({
   name: 'App',
   components: {
-    BossImage,
-    WarriorImage
   }
 });
 </script>
 
-<style>
+<style lang="scss">
+
 #app {
+  width: 100%;
+  height: 100%;
   font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-#test-boss {
-  width: 500px;
+.warrior-image-wrapper {
+  /* width: 500px;
   height: 500px;
-  padding: 3rem;
-  background: radial-gradient(circle, rgba(149,149,149,1) 0%, rgba(93,93,93,1) 100%);
-}
-
-#test {
-  width: 500px;
-  height: 500px;
-  /* background-color: rgb(204, 203, 143); */
-  padding: 3rem;
+  padding: 3rem; */
   /* red */
   /* background: radial-gradient(circle, rgba(171,115,115,1) 0%, rgba(107,60,60,1) 100%); */
   /* green */
   /* background: radial-gradient(circle, rgba(115,171,141,1) 0%, rgba(60,107,72,1) 100%); */
   /* blue */
-  background: radial-gradient(circle, rgba(115,119,171,1) 0%, rgba(60,62,107,1) 100%);
+  /* background: radial-gradient(circle, rgba(115,119,171,1) 0%, rgba(60,62,107,1) 100%); */
+  /* lurid giant */
+  /* background: radial-gradient(circle, rgba(149,149,149,1) 0%, rgba(93,93,93,1) 100%); */
 }
 </style>
