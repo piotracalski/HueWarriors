@@ -1,7 +1,8 @@
 <template>
-  <header>
-    <div>
+  <header class="header-main">
+    <div class="container-centered">
       <h1 class="heading-main">Hue Warriors</h1>
+      <button>connect your wallet to play the game</button>
     </div>
   </header>
 </template>
