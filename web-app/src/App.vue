@@ -1,9 +1,14 @@
 <template>
   <!-- <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/> -->
   <div>
+    <div id="test-boss">
+      <BossImage />
+    </div>
+    <br>
     <div id="test">
       <WarriorImage />
     </div>
+    <img alt="" src="./assets/images/lurid-giant.png">
     <img alt="" src="./assets/images/warrior-red.png">
     <img alt="" src="./assets/images/warrior-green.png">
     <img alt="" src="./assets/images/warrior-blue.png">
@@ -13,11 +18,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 // import HelloWorld from './components/HelloWorld.vue';
+import BossImage from './components/boss/BossImage.vue';
 import WarriorImage from './components/warrior/WarriorImage.vue';
 
 export default defineComponent({
   name: 'App',
   components: {
+    BossImage,
     WarriorImage
   }
 });
@@ -31,6 +38,13 @@ export default defineComponent({
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+
+#test-boss {
+  width: 500px;
+  height: 500px;
+  padding: 3rem;
+  background: radial-gradient(circle, rgba(149,149,149,1) 0%, rgba(93,93,93,1) 100%);
 }
 
 #test {

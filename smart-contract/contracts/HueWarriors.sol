@@ -25,6 +25,17 @@ contract HueWarriors is ERC721 {
     uint criticalHitChance;
   }
 
+  struct Boss {
+    string name;
+    string imageURI;
+    uint purity;
+    uint maxPurity;
+    uint attackStrength;
+    uint criticalHitChance;
+  }
+
+  Boss public boss;
+
   // NFTs unique identifier
   using Counters for Counters.Counter;
   Counters.Counter private _tokenIds;
@@ -42,10 +53,26 @@ contract HueWarriors is ERC721 {
     string[] memory characterImageURIs,
     uint[] memory characterPurity,
     uint[] memory characterStrength,
-    uint[] memory criticalHitChance
+    uint[] memory criticalHitChance,
+    string memory bossName,
+    string memory bossImageURI,
+    uint bossPurity,
+    uint bossAttackStrength,
+    uint bossCriticalHitChance
   )
     ERC721("HueWarriors", "HUWA")
   {
+    boss = Boss({
+      name: bossName,
+      imageURI: bossImageURI,
+      hp: bossPurity,
+      maxHp: bossPurity,
+      attackDamage: bossAttackStrength,
+      criticalHitChance: bossCriticalHitChance
+    });
+
+    console.log("Done initializing boss %s w/ Purity %s, img %s", boss.name, boss.purity, boss.imageURI);
+
     for(uint i = 0; i < characterNames.length; i += 1) {
       defaultCharacters.push(CharacterAttributes({
         characterIndex: i,
