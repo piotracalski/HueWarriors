@@ -65,9 +65,9 @@ contract HueWarriors is ERC721 {
     boss = Boss({
       name: bossName,
       imageURI: bossImageURI,
-      hp: bossPurity,
-      maxHp: bossPurity,
-      attackDamage: bossAttackStrength,
+      purity: bossPurity,
+      maxPurity: bossPurity,
+      attackStrength: bossAttackStrength,
       criticalHitChance: bossCriticalHitChance
     });
 
@@ -148,5 +148,44 @@ contract HueWarriors is ERC721 {
     );
     
     return output;
+  }
+
+  function attackBoss() public {
+
+    // Get the state of the player's NFT.
+    uint256 nftTokenIdOfPlayer = nftHolders[msg.sender];
+    CharacterAttributes storage player = nftHolderAttributes[nftTokenIdOfPlayer];
+    console.log("\nPlayer w/ character %s about to attack. Has %s Purity and %s AS", player.name, player.purity, player.attackStrength);
+    console.log("Boss %s has %s purity and %s AS", boss.name, boss.purity, boss.attackStrength);
+
+    // Make sure the player has more than 0 purity.
+    require (
+      player.purity > 0,
+      "Error: character must have purity to attack boss."
+    );
+
+    // Make sure the boss has more than 0 purity.
+    require (
+      boss.purity > 0,
+      "Error: boss must have purity to attack boss."
+    );
+
+    // Allow player to attack boss.
+    if (boss.purity < player.attackStrength) {
+      boss.purity = 0;
+    } else {
+      boss.purity = boss.purity - player.attackStrength;
+    }
+
+    // Allow boss to attack player.
+    if (player.purity < boss.attackStrength) {
+      player.purity = 0;
+    } else {
+      player.purity = player.purity - boss.attackStrength;
+    }
+  
+    // Console for ease.
+    console.log("Player attacked boss. New boss purity: %s", boss.purity);
+    console.log("Boss attacked player. New player purity: %s\n", player.purity);
   }
 }
