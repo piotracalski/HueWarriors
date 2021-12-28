@@ -1,19 +1,26 @@
 <template>
   <main>
     <transition name="mode-fade" mode="out-in">
-      <div
-        v-if="!currentAccount"
-        class="container-centered"
-      >
-        <h1 class="heading-main">Hue Warriors</h1>
-        <button @click="connectWallet">Connect Your Wallet to Play the Game</button>
-      </div>
+      <section v-if="loading">
+        <div>LOADER</div>
+      </section>
+      <section v-else>
+        <div
+          v-if="!currentAccount"
+          class="container-centered"
+        >
+          <h1 class="heading-main">Hue Warriors</h1>
+          <button @click="connectWallet">Connect Your Wallet to Play the Game</button>
+        </div>
+        <SelectCharacter v-else-if="currentAccount && !characterNFT"/>
+      </section>
     </transition>
   </main>
 </template>
 
 <script lang="ts">
 import { defineComponent, reactive, toRefs, onMounted } from 'vue';
+import SelectCharacter from './components/views/SelectCharacter.vue'
 
 declare global {
   interface Window {
@@ -24,11 +31,14 @@ declare global {
 export default defineComponent({
   name: 'App',
   components: {
+    SelectCharacter
   },
   setup() {
 
     const state = reactive({
-      currentAccount: undefined
+      loading: true,
+      currentAccount: undefined,
+      characterNFT: undefined
     })
 
     const checkIfWalletIsConnected = async () => {
@@ -38,7 +48,6 @@ export default defineComponent({
 
         if (!ethereum) {
           console.log('Make sure you have MetaMask!')
-          return
         } else {
           console.log('We have the ethereum object', ethereum)
 
@@ -52,12 +61,15 @@ export default defineComponent({
             console.log('No authorized account found')
           }
         }
+
+        return
       } catch (error) {
         console.log(error)
       }
     }
 
     const connectWallet = async () => {
+      state.loading = true
       try {
         const { ethereum } = window
         if (!ethereum) {
@@ -67,13 +79,15 @@ export default defineComponent({
         const accounts = await ethereum.request({ method: "eth_requestAccounts" })
         console.log("Connected", accounts[0])
         state.currentAccount = accounts[0]
+        state.loading = false
       } catch (error) {
         console.log(error)
       }
     }
 
-    onMounted(() => {
-      checkIfWalletIsConnected()
+    onMounted(async () => {
+      await checkIfWalletIsConnected()
+      state.loading = false
     })
 
     return {
@@ -94,6 +108,10 @@ export default defineComponent({
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  background-image: url('./assets/backgrounds/h-logo.svg');
+  background-position: center;
+  background-size: 90% 90%;
+  background-repeat: no-repeat;
 }
 
 .warrior-image-wrapper {
