@@ -2,7 +2,7 @@
   <main>
     <transition name="mode-fade" mode="out-in">
       <section v-if="loading">
-        <div>LOADER</div>
+        <Loader />
       </section>
       <section v-else>
         <div
@@ -19,7 +19,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs, onMounted } from 'vue';
+import { defineComponent, reactive, toRefs, onMounted } from 'vue'
+import Loader from './components/common/Loader.vue'
 import SelectCharacter from './components/views/SelectCharacter.vue'
 
 declare global {
@@ -31,6 +32,7 @@ declare global {
 export default defineComponent({
   name: 'App',
   components: {
+    Loader,
     SelectCharacter
   },
   setup() {
@@ -61,11 +63,11 @@ export default defineComponent({
             console.log('No authorized account found')
           }
         }
-
-        return
       } catch (error) {
         console.log(error)
+        state.loading = false
       }
+      return
     }
 
     const connectWallet = async () => {
@@ -74,7 +76,6 @@ export default defineComponent({
         const { ethereum } = window
         if (!ethereum) {
           alert("Get MetaMask!")
-          return
         }
         const accounts = await ethereum.request({ method: "eth_requestAccounts" })
         console.log("Connected", accounts[0])
@@ -82,7 +83,9 @@ export default defineComponent({
         state.loading = false
       } catch (error) {
         console.log(error)
+        state.loading = false
       }
+      return
     }
 
     onMounted(async () => {
