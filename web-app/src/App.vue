@@ -6,28 +6,39 @@
       </section>
       <section v-else>
         <div
-          v-if="!currentAccount"
+          v-if="!accountConnected"
           class="container-centered"
         >
           <h1 class="heading-main">Hue Warriors</h1>
           <button @click="connectWallet">Connect Your Wallet to Play the Game</button>
         </div>
-        <SelectCharacter v-else-if="currentAccount && !characterNFT"/>
+        <SelectCharacter v-else-if="accountConnected && !characterNFT"/>
       </section>
     </transition>
   </main>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs, onMounted } from 'vue'
+import {
+  defineComponent,
+  reactive,
+  ref,
+  toRefs,
+  onMounted,
+  watchEffect
+} from 'vue'
 import Loader from './components/common/Loader.vue'
 import SelectCharacter from './components/views/SelectCharacter.vue'
+
+import contractConfig from './utils/contractConfig.json'
+import { ethers } from 'ethers'
 
 declare global {
   interface Window {
     ethereum:any;
   }
-} 
+
+}
 
 export default defineComponent({
   name: 'App',
@@ -37,11 +48,24 @@ export default defineComponent({
   },
   setup() {
 
+    const currentAccount = ref('')
+
     const state = reactive({
+      contractAddress: '0xfA102d423cCAE86301A9e90c7f9DD94D4401c657',
       loading: true,
-      currentAccount: undefined,
+      accountConnected: false,
       characterNFT: undefined
     })
+
+    const checkNetwork = async () => {      
+      try { 
+        if (window.ethereum.networkVersion !== '4') {
+          alert("Please connect to Rinkeby!")
+        }
+      } catch(error) {
+        console.log(error)
+      }
+    }
 
     const checkIfWalletIsConnected = async () => {
 
@@ -58,7 +82,8 @@ export default defineComponent({
           if (accounts.length !== 0) {
             const account = accounts[0]
             console.log('Found an authorized account:', account)
-            state.currentAccount = account
+            currentAccount.value = account
+            state.accountConnected = true
           } else {
             console.log('No authorized account found')
           }
@@ -79,7 +104,8 @@ export default defineComponent({
         }
         const accounts = await ethereum.request({ method: "eth_requestAccounts" })
         console.log("Connected", accounts[0])
-        state.currentAccount = accounts[0]
+        state.accountConnected = true
+        currentAccount.value = accounts[0]
         state.loading = false
       } catch (error) {
         console.log(error)
@@ -90,10 +116,18 @@ export default defineComponent({
 
     onMounted(async () => {
       await checkIfWalletIsConnected()
+      await checkNetwork()
       state.loading = false
     })
 
+    watchEffect(() => {
+      if (currentAccount.value !== '') {
+        console.log('currentAccount vaue is: ' + currentAccount.value)
+      }
+    })
+
     return {
+      currentAccount,
       ...toRefs(state),
       checkIfWalletIsConnected,
       connectWallet

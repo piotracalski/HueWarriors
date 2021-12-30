@@ -1,6 +1,6 @@
 <template>
   <div class="container-centered">
-    <h1 class="heading-secondary">Select Character</h1>
+    <h1 class="heading-secondary">Select Your Character</h1>
   </div>
 </template>
 
