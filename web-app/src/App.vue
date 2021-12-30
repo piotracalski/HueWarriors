@@ -6,13 +6,13 @@
       </section>
       <section v-else>
         <div
-          v-if="!accountConnected"
+          v-if="!currentAccount"
           class="container-centered"
         >
           <h1 class="heading-main">Hue Warriors</h1>
           <button @click="connectWallet">Connect Your Wallet to Play the Game</button>
         </div>
-        <SelectCharacter v-else-if="accountConnected && !characterNFT"/>
+        <SelectCharacter v-else-if="currentAccount && !characterNFT"/>
       </section>
     </transition>
   </main>
@@ -22,10 +22,9 @@
 import {
   defineComponent,
   reactive,
-  ref,
   toRefs,
   onMounted,
-  watchEffect
+  watch
 } from 'vue'
 import Loader from './components/common/Loader.vue'
 import SelectCharacter from './components/views/SelectCharacter.vue'
@@ -48,12 +47,10 @@ export default defineComponent({
   },
   setup() {
 
-    const currentAccount = ref('')
-
     const state = reactive({
       contractAddress: '0xfA102d423cCAE86301A9e90c7f9DD94D4401c657',
       loading: true,
-      accountConnected: false,
+      currentAccount: undefined,
       characterNFT: undefined
     })
 
@@ -82,8 +79,7 @@ export default defineComponent({
           if (accounts.length !== 0) {
             const account = accounts[0]
             console.log('Found an authorized account:', account)
-            currentAccount.value = account
-            state.accountConnected = true
+            state.currentAccount = account
           } else {
             console.log('No authorized account found')
           }
@@ -104,8 +100,7 @@ export default defineComponent({
         }
         const accounts = await ethereum.request({ method: "eth_requestAccounts" })
         console.log("Connected", accounts[0])
-        state.accountConnected = true
-        currentAccount.value = accounts[0]
+        state.currentAccount = accounts[0]
         state.loading = false
       } catch (error) {
         console.log(error)
@@ -120,14 +115,15 @@ export default defineComponent({
       state.loading = false
     })
 
-    watchEffect(() => {
-      if (currentAccount.value !== '') {
-        console.log('currentAccount vaue is: ' + currentAccount.value)
+    watch(
+      () => state.currentAccount,
+      (currentAccount) => {
+        console.log(currentAccount);
+        
       }
-    })
+    )
 
     return {
-      currentAccount,
       ...toRefs(state),
       checkIfWalletIsConnected,
       connectWallet
