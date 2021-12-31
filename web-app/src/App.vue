@@ -12,7 +12,7 @@
           <h1 class="heading-main">Hue Warriors</h1>
           <button @click="connectWallet">Connect Your Wallet to Play the Game</button>
         </div>
-        <SelectCharacter v-else-if="currentAccount && !characterNFT"/>
+        <SelectCharacter v-else-if="currentAccount && !hasNFT"/>
       </section>
     </transition>
   </main>
@@ -30,13 +30,13 @@ import Loader from './components/common/Loader.vue'
 import SelectCharacter from './components/views/SelectCharacter.vue'
 
 import contractConfig from './utils/contractConfig.json'
+import { transformCharacterData } from './utils/methods'
 import { ethers } from 'ethers'
 
 declare global {
   interface Window {
     ethereum:any;
   }
-
 }
 
 export default defineComponent({
@@ -51,7 +51,8 @@ export default defineComponent({
       contractAddress: '0xfA102d423cCAE86301A9e90c7f9DD94D4401c657',
       loading: true,
       currentAccount: undefined,
-      characterNFT: undefined
+      hasNFT: false,
+      characterNFT: Object()
     })
 
     const checkNetwork = async () => {      
@@ -101,7 +102,7 @@ export default defineComponent({
         const accounts = await ethereum.request({ method: "eth_requestAccounts" })
         console.log("Connected", accounts[0])
         state.currentAccount = accounts[0]
-        state.loading = false
+        // state.loading is set to false in watch()
       } catch (error) {
         console.log(error)
         state.loading = false
@@ -117,9 +118,32 @@ export default defineComponent({
 
     watch(
       () => state.currentAccount,
-      (currentAccount) => {
-        console.log(currentAccount);
-        
+      async (currentAccount) => {
+        if (currentAccount) {
+          console.log(`Current account: ${currentAccount}`)
+          console.log('Checking for Character NFT on address:', currentAccount)
+
+          const provider = new ethers.providers.Web3Provider(window.ethereum)
+          const signer = provider.getSigner()
+          const gameContract = new ethers.Contract(
+            state.contractAddress,
+            contractConfig.abi,
+            signer
+          )
+
+          const txn = await gameContract.checkIfUserHasNFT()
+          console.log(txn)
+          if (txn.name) {
+            console.log('User has character NFT')
+            state.characterNFT = transformCharacterData(txn)
+            state.hasNFT = true
+          } else {
+            console.log('No character NFT found')
+            state.hasNFT = false
+            state.characterNFT = {}
+          }
+        }
+        state.loading = false
       }
     )
 
