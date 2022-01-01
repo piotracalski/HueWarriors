@@ -12,7 +12,7 @@
           <h1 class="heading-main">Hue Warriors</h1>
           <button @click="connectWallet">Connect Your Wallet to Play the Game</button>
         </div>
-        <SelectCharacter v-else-if="currentAccount && !hasNFT"/>
+        <SelectCharacter v-else-if="currentAccount && !characterNFT.name"/>
       </section>
     </transition>
   </main>
@@ -29,9 +29,11 @@ import {
 import Loader from './components/common/Loader.vue'
 import SelectCharacter from './components/views/SelectCharacter.vue'
 
-import contractConfig from './utils/contractConfig.json'
-import { transformCharacterData } from './utils/methods'
 import { ethers } from 'ethers'
+
+import contractConfig from './utils/contractConfig.json'
+import { contractAddress } from './utils/constants'
+import { transformCharacterData } from './utils/methods'
 
 declare global {
   interface Window {
@@ -48,10 +50,10 @@ export default defineComponent({
   setup() {
 
     const state = reactive({
-      contractAddress: '0xfA102d423cCAE86301A9e90c7f9DD94D4401c657',
+      
       loading: true,
       currentAccount: undefined,
-      hasNFT: false,
+      // hasNFT: false,
       characterNFT: Object()
     })
 
@@ -126,7 +128,7 @@ export default defineComponent({
           const provider = new ethers.providers.Web3Provider(window.ethereum)
           const signer = provider.getSigner()
           const gameContract = new ethers.Contract(
-            state.contractAddress,
+            contractAddress,
             contractConfig.abi,
             signer
           )
@@ -136,10 +138,10 @@ export default defineComponent({
           if (txn.name) {
             console.log('User has character NFT')
             state.characterNFT = transformCharacterData(txn)
-            state.hasNFT = true
+            // state.hasNFT = true
           } else {
             console.log('No character NFT found')
-            state.hasNFT = false
+            // state.hasNFT = false
             state.characterNFT = {}
           }
         }

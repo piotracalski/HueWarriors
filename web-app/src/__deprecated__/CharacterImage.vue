@@ -6,13 +6,13 @@
     width="100%"
     height="100%"
     viewBox="0 0 128.000000 128.000000"
-    class="warrior-image"
+    class="character-image"
   >
     <g transform="translate(0.000000,128.000000) scale(0.100000,-0.100000)"
     fill="#000000" stroke="none"
     width="100%"
     height="100%">
-      <path class="theme" d="M576 1259 c-23 -18 -38 -48 -18 -35 17 10 81 -15 100 -39 11 -14 23
+      <path :class="`theme-${hue}`" d="M576 1259 c-23 -18 -38 -48 -18 -35 17 10 81 -15 100 -39 11 -14 23
       -46 26 -72 12 -80 14 -83 54 -82 20 0 31 3 24 6 -18 7 -39 52 -47 103 -21 126
       -73 171 -139 119z"/>
       <path d="M503 1186 c-23 -20 -30 -38 -45 -122 -9 -55 -14 -102 -9 -107 4 -4
@@ -46,7 +46,7 @@
       34 -80 25z m84 -67 c32 -22 73 -45 90 -52 37 -15 38 -27 8 -101 -45 -109 -121
       -188 -211 -220 l-38 -14 -39 43 c-53 60 -81 139 -83 232 0 41 2 87 7 103 7 25
       11 27 60 28 28 0 70 4 92 8 22 5 43 9 47 10 4 0 34 -16 67 -37z"/>
-      <path class="theme" d="M845 770 c-16 -4 -58 -8 -91 -9 -73 -1 -74 -2 -74 -111 0 -98 27
+      <path :class="`theme-${hue}`" d="M845 770 c-16 -4 -58 -8 -91 -9 -73 -1 -74 -2 -74 -111 0 -98 27
       -177 80 -234 l37 -40 56 27 c30 15 72 46 92 69 48 53 121 208 98 208 -8 0 -52
       25 -143 81 -17 11 -35 13 -55 9z"/>
       <path d="M270 636 c-5 -14 -15 -55 -21 -90 -13 -70 -5 -96 31 -96 27 0 38 20
@@ -58,19 +58,31 @@
 
 <script>
 export default {
-
+  name: 'CharacterImage',
+  props: {
+    hue: {
+      required: true,
+      type: String
+    }
+  }
 }
 </script>
 
 <style scoped lang="scss">
-  .warrior-image {
+  .character-image {
     width: 100%;
     height: 100%;
   }
 
-  .theme {
-    // fill: $red-clean;
-    // fill: $green-clean;
+  .theme-red {
+    fill: $red-clean;
+  }
+
+  .theme-green {
+    fill: $green-clean;
+  }
+
+  .theme-blue {
     fill: $blue-clean;
   }
 </style>
