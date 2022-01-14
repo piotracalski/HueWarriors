@@ -1,5 +1,12 @@
 <template>
-  <div>{{characterNFT.name}}</div>
+  <div class="container-centered">
+    <h1 class="heading-secondary">The Arena</h1>
+    <div id="arena-wrapper">
+      <div id="boss-wrapper" class="arena-element">BOSS</div>
+      <div id="vs-wrapper" class="arena-element">VS</div>
+      <div id="character-wrapper" class="arena-element">{{characterNFT.name}}</div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -22,7 +29,8 @@ export default defineComponent({
   setup() {
 
     const state = reactive({
-      gameContract: null
+      gameContract: null,
+      boss: null
     })
 
     const getGameContract = async () => {
@@ -44,8 +52,16 @@ export default defineComponent({
       }
     }
 
+    const fetchBoss = async () => {
+      const bossTxn = await state.gameContract.getBoss()
+      console.log('Boss:', bossTxn)
+      return transformCharacterData(bossTxn)
+    }
+
     onMounted(async () => {
       state.gameContract = await getGameContract()
+
+      if (state.gameContract.address) state.boss = await fetchBoss()
     })
 
     return {
@@ -56,5 +72,28 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+
+  #arena-wrapper {
+    width: 70vw;
+    height: 50vh;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-rows: 1fr;
+    // background-color: red;
+
+    .arena-element {
+      // width: 100%;
+      // height: 100%;
+      place-self: center;
+      // background-color: green;
+    }
+
+    #vs-wrapper {
+      font-size: 6rem;
+      font-weight: bold;
+      color: red;
+      text-shadow: 0 0 10px rgb(232, 232, 232);
+    }
+  }
 
 </style>

@@ -186,18 +186,4 @@ export default defineComponent({
   background-size: 90% 90%;
   background-repeat: no-repeat;
 }
-
-.warrior-image-wrapper {
-  /* width: 500px;
-  height: 500px;
-  padding: 3rem; */
-  /* red */
-  /* background: radial-gradient(circle, rgba(171,115,115,1) 0%, rgba(107,60,60,1) 100%); */
-  /* green */
-  /* background: radial-gradient(circle, rgba(115,171,141,1) 0%, rgba(60,107,72,1) 100%); */
-  /* blue */
-  /* background: radial-gradient(circle, rgba(115,119,171,1) 0%, rgba(60,62,107,1) 100%); */
-  /* lurid giant */
-  /* background: radial-gradient(circle, rgba(149,149,149,1) 0%, rgba(93,93,93,1) 100%); */
-}
 </style>
