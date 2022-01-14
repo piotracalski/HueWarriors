@@ -6,13 +6,15 @@
         v-for="(character, index) in characters"
         :key="character ? character.name : index"
         :character="character ? character : undefined"
+        :index="index"
+        @mint-character="mintCharacterNFTAction"
       />
     </div>
   </div>
 </template>
 
 <script>
-import { defineComponent, toRefs, reactive, onMounted } from 'vue'
+import { defineComponent, toRefs, reactive, onMounted, onUnmounted } from 'vue'
 import Character from '../character/Character.vue'
 
 import { ethers } from 'ethers'
@@ -23,10 +25,11 @@ import { transformCharacterData } from '../../utils/methods'
 
 export default defineComponent({
   name: 'SelectCharacter',
+  emits: ['character-minted'],
   components: {
     Character
   },
-  setup() {
+  setup(props, ctx) {
     const state = reactive({
       characters: Array(3),
       gameContract: null
@@ -44,6 +47,7 @@ export default defineComponent({
           contractConfig.abi,
           signer
         );
+        gameContract.on('CharacterNFTMinted', onCharacterMint)
         return gameContract
       } else {
         console.log('Ethereum object not found')
@@ -73,16 +77,44 @@ export default defineComponent({
       }
     }
 
+    const mintCharacterNFTAction = async (characterId) => {
+      console.log(characterId);
+      try {
+        if (state.gameContract.address) {
+          console.log('Minting character in progress...');
+          const mintTxn = await state.gameContract.mintCharacterNFT(characterId);
+          await mintTxn.wait();
+          console.log('mintTxn:', mintTxn);
+          ctx.emit('character-minted', mintTxn)
+        }
+      } catch (error) {
+        console.warn('MintCharacterAction Error:', error);
+      }
+    }
+
+    const onCharacterMint = async (sender, tokenId, characterIndex) => {
+
+      const txn = await state.gameContract.checkIfUserHasNFT()
+      console.log('CharacterNFT: ', characterNFT)
+      const characterNFT = transformCharacterData(txn)
+
+      ctx.emit('character-minted', characterNFT)
+      alert(`Your NFT is all done -- see it here: https://testnets.opensea.io/assets/${sender}/${tokenId.toNumber()}`)
+    }
+
     onMounted(async () => {
       state.gameContract = await getGameContract()
-      console.log(state.gameContract)
-      console.log(state.characters)
       state.characters = await getCharacters()
-      console.log(state.characters)
+    })
+
+    onUnmounted(() => {
+      // below should be fixed but it's not
+      // state.gameContract.off('CharacterNFTMinted', onCharacterMint)
     })
 
     return {
-      ...toRefs(state)
+      ...toRefs(state),
+      mintCharacterNFTAction
     }
   }
 })

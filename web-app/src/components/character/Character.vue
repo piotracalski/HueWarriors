@@ -9,7 +9,7 @@
           class="character-image"
         />
       </div>
-      <button>{{ character ? character.name : 'Loading character' }}</button>
+      <button @click="$emit('mint-character', index)">{{ character ? character.name : 'Loading character' }}</button>
     </div>
   </div>
 </template>
@@ -19,6 +19,7 @@ import Loader from '../common/Loader.vue'
 
 export default {
   name: 'Character',
+  emits: ['mint-character'],
   components: {
     Loader
   },
@@ -26,6 +27,10 @@ export default {
     character: {
       required: false,
       type: Object
+    },
+    index: {
+      required: true,
+      type: Number
     }
   }
 }

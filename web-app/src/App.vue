@@ -12,7 +12,13 @@
           <h1 class="heading-main">Hue Warriors</h1>
           <button @click="connectWallet">Connect Your Wallet to Play the Game</button>
         </div>
-        <SelectCharacter v-else-if="currentAccount && !characterNFT.name"/>
+        <div
+          v-else
+          class="container-centered"
+        >
+          <SelectCharacter v-if="!characterNFT.name" @character-minted="setCharacterNFT" />
+          <Arena v-else :characterNFT="characterNFT" />
+        </div>
       </section>
     </transition>
   </main>
@@ -28,6 +34,7 @@ import {
 } from 'vue'
 import Loader from './components/common/Loader.vue'
 import SelectCharacter from './components/views/SelectCharacter.vue'
+import Arena from './components/views/Arena.vue'
 
 import { ethers } from 'ethers'
 
@@ -45,7 +52,8 @@ export default defineComponent({
   name: 'App',
   components: {
     Loader,
-    SelectCharacter
+    SelectCharacter,
+    Arena
   },
   setup() {
 
@@ -54,7 +62,10 @@ export default defineComponent({
       loading: true,
       currentAccount: undefined,
       // hasNFT: false,
-      characterNFT: Object()
+      // characterNFT: Object()
+      characterNFT: {
+        // name: 'test'
+      }
     })
 
     const checkNetwork = async () => {      
@@ -112,6 +123,12 @@ export default defineComponent({
       return
     }
 
+    const setCharacterNFT = (characterNFT: any) => {
+      console.log('setCharacterNFT', characterNFT);
+      
+      state.characterNFT = characterNFT
+    }
+
     onMounted(async () => {
       await checkIfWalletIsConnected()
       await checkNetwork()
@@ -134,15 +151,11 @@ export default defineComponent({
           )
 
           const txn = await gameContract.checkIfUserHasNFT()
-          console.log(txn)
           if (txn.name) {
             console.log('User has character NFT')
             state.characterNFT = transformCharacterData(txn)
-            // state.hasNFT = true
           } else {
             console.log('No character NFT found')
-            // state.hasNFT = false
-            state.characterNFT = {}
           }
         }
         state.loading = false
@@ -152,7 +165,8 @@ export default defineComponent({
     return {
       ...toRefs(state),
       checkIfWalletIsConnected,
-      connectWallet
+      connectWallet,
+      setCharacterNFT
     }
   }
 });

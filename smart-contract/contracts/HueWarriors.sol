@@ -98,7 +98,7 @@ contract HueWarriors is ERC721 {
   }
 
   // Users would be able to hit this function and get their NFT based on the characterId they send in
-  function mintCharacterNFT(uint _characterIndex) external {
+  function mintCharacterNFT(uint256 _characterIndex) external {
 
     // Get current tokenId (starts at 1 since we incremented in the constructor).
     uint256 newItemId = _tokenIds.current();
