@@ -2,15 +2,20 @@
   <div class="container-centered">
     <h1 class="heading-secondary">The Arena</h1>
     <div id="arena-wrapper">
-      <div id="boss-wrapper" class="arena-element">BOSS</div>
+      <div id="boss-wrapper" class="arena-element arena-character-wrapper">
+        <ArenaCharacter :character="boss"/>
+      </div>
       <div id="vs-wrapper" class="arena-element">VS</div>
-      <div id="character-wrapper" class="arena-element">{{characterNFT.name}}</div>
+      <div id="character-wrapper" class="arena-element arena-character-wrapper">
+        <ArenaCharacter :character="characterNFT"/>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import { defineComponent, reactive, toRefs, onMounted } from 'vue'
+import ArenaCharacter from '../character/ArenaCharacter.vue'
 
 import { ethers } from 'ethers'
 
@@ -20,6 +25,9 @@ import { transformCharacterData } from '../../utils/methods'
 
 export default defineComponent({
   name: 'Arena',
+  components: {
+    ArenaCharacter
+  },
   props: {
     characterNFT: {
       type: Object,
@@ -79,13 +87,17 @@ export default defineComponent({
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     grid-template-rows: 1fr;
+    gap: 5rem;
     // background-color: red;
 
     .arena-element {
-      // width: 100%;
-      // height: 100%;
       place-self: center;
-      // background-color: green;
+
+      &.arena-character-wrapper {
+        width: 100%;
+        height: 100%;
+        // background-color: green;
+      }
     }
 
     #vs-wrapper {
