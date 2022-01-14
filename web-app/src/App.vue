@@ -17,7 +17,7 @@
           class="container-centered"
         >
           <SelectCharacter v-if="!characterNFT.name" @character-minted="setCharacterNFT" />
-          <Arena v-else :characterNFT="characterNFT" />
+          <Arena v-else :characterNFT="characterNFT" @character-purity-change="setCharacterPurity" />
         </div>
       </section>
     </transition>
@@ -65,6 +65,7 @@ export default defineComponent({
       // characterNFT: Object()
       characterNFT: {
         // name: 'test'
+        purity: Number()
       }
     })
 
@@ -129,6 +130,10 @@ export default defineComponent({
       state.characterNFT = characterNFT
     }
 
+    const setCharacterPurity = (value: number) => {
+      state.characterNFT.purity = value
+    }
+
     onMounted(async () => {
       await checkIfWalletIsConnected()
       await checkNetwork()
@@ -166,7 +171,8 @@ export default defineComponent({
       ...toRefs(state),
       checkIfWalletIsConnected,
       connectWallet,
-      setCharacterNFT
+      setCharacterNFT,
+      setCharacterPurity
     }
   }
 });

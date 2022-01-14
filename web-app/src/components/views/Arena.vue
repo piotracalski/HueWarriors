@@ -7,10 +7,10 @@
       </div>
       <div id="vs-wrapper" class="arena-element">VS</div>
       <div id="character-wrapper" class="arena-element arena-character-wrapper">
-        <ArenaCharacter :character="characterNFT"/>
+        <ArenaCharacter :character="characterNFT" />
       </div>
     </div>
-    <button>Attack!</button>
+    <button @click="runAttackAction">Attack!</button>
   </div>
 </template>
 
@@ -26,6 +26,7 @@ import { transformCharacterData } from '../../utils/methods'
 
 export default defineComponent({
   name: 'Arena',
+  emits: ['character-purity-change'],
   components: {
     ArenaCharacter
   },
@@ -35,11 +36,13 @@ export default defineComponent({
       required: true
     }
   },
-  setup() {
+  setup(props, ctx) {
 
     const state = reactive({
       gameContract: null,
-      boss: null
+      boss: null,
+      attackState: '',
+      playerPurity: undefined
     })
 
     const getGameContract = async () => {
@@ -53,7 +56,8 @@ export default defineComponent({
           contractAddress,
           contractConfig.abi,
           signer
-        );
+        )
+        gameContract.on('AttackComplete', onAttackComplete)
         return gameContract
       } else {
         console.log('Ethereum object not found')
@@ -63,9 +67,35 @@ export default defineComponent({
 
     const fetchBoss = async () => {
       const bossTxn = await state.gameContract.getBoss()
-      console.log('Boss:', bossTxn)
+      // console.log('Boss:', bossTxn)
       return transformCharacterData(bossTxn)
     }
+
+    const runAttackAction = async () => {
+      try {
+        if (state.gameContract) {
+          state.attackState = 'attacking'
+          console.log('Attacking boss...')
+          const attackTxn = await state.gameContract.attackBoss()
+          await attackTxn.wait()
+          console.log('attackTxn:', attackTxn)
+          state.attackState = 'hit'
+        }
+      } catch (error) {
+        console.error('Error attacking boss:', error)
+        state.attackState = ''
+      }
+    }
+
+     const onAttackComplete = (newBossPurity, newPlayerPurity) => {
+        const bossPurity = newBossPurity.toNumber()
+        const playerPurity = newPlayerPurity.toNumber()
+
+        console.log(`AttackComplete: Boss Purity: ${bossPurity} Player Purity: ${playerPurity}`)
+
+        state.boss.purity = bossPurity
+        ctx.emit('character-purity-change', playerPurity)
+      }
 
     onMounted(async () => {
       state.gameContract = await getGameContract()
@@ -74,7 +104,8 @@ export default defineComponent({
     })
 
     return {
-      ...toRefs(state)
+      ...toRefs(state),
+      runAttackAction
     }
   }
 })
