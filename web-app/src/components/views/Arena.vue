@@ -10,6 +10,7 @@
         <ArenaCharacter :character="characterNFT"/>
       </div>
     </div>
+    <button>Attack!</button>
   </div>
 </template>
 
@@ -82,12 +83,12 @@ export default defineComponent({
 <style lang="scss">
 
   #arena-wrapper {
-    width: 70vw;
+    width: 50vw;
     height: 50vh;
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     grid-template-rows: 1fr;
-    gap: 5rem;
+    gap: 10rem;
     // background-color: red;
 
     .arena-element {

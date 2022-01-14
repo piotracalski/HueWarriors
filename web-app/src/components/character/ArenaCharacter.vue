@@ -1,6 +1,8 @@
 <template>
   <div class="character-wrapper">
     <CharacterImage :name="character ? character.name : undefined" />
+    <div class="character-label">{{ character ? character.name : 'Loading character' }}</div>
+    <div class="purity-bar">Purity: {{ character ? `${character.purity} / ${character.maxPurity}` : undefined }}</div>
   </div>
 </template>
 
@@ -23,5 +25,11 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+
+  .character-label {
+    text-align: center;
+    font-size: 2rem;
+    margin: 1rem 0;
+  }
 
 </style>
