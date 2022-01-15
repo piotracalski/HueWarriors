@@ -10,7 +10,10 @@
         <ArenaCharacter :character="characterNFT" />
       </div>
     </div>
-    <button @click="runAttackAction">Attack!</button>
+    <button @click="minting ? {} : runAttackAction">
+      <span v-if="minting" class="loading">Minting</span>
+      <span v-else>Attack!</span>
+    </button>
   </div>
 </template>
 
@@ -28,7 +31,7 @@ export default defineComponent({
   name: 'Arena',
   emits: ['character-purity-change'],
   components: {
-    ArenaCharacter
+    ArenaCharacter,
   },
   props: {
     characterNFT: {
@@ -41,7 +44,7 @@ export default defineComponent({
     const state = reactive({
       gameContract: null,
       boss: null,
-      attackState: '',
+      minting: true,
       playerPurity: undefined
     })
 
@@ -74,16 +77,15 @@ export default defineComponent({
     const runAttackAction = async () => {
       try {
         if (state.gameContract) {
-          state.attackState = 'attacking'
+          state.minting = true
           console.log('Attacking boss...')
           const attackTxn = await state.gameContract.attackBoss()
           await attackTxn.wait()
           console.log('attackTxn:', attackTxn)
-          state.attackState = 'hit'
         }
       } catch (error) {
         console.error('Error attacking boss:', error)
-        state.attackState = ''
+        state.minting = false
       }
     }
 
@@ -95,6 +97,7 @@ export default defineComponent({
 
         state.boss.purity = bossPurity
         ctx.emit('character-purity-change', playerPurity)
+        state.minting = false
       }
 
     onMounted(async () => {
