@@ -9,7 +9,7 @@
           v-if="!currentAccount"
           class="container-centered"
         >
-          <h1 class="heading-main">trewwd</h1>
+          <h1 class="heading-main">Hue Warriors</h1>
           <button @click="connectWallet">Connect Your Wallet to Play the Game</button>
         </div>
         <div
